@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Global Weather Map</title>
+        <link rel="icon" href="data:,">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" />
+        <link rel="stylesheet" href="styles.css">
+    </head>
+<body>
+    <div id="sidebar">
+        <h2>Weather Filters</h2>
+        <div class="slider-group">
+            <label>Avg High Temp (°F)</label>
+            <div id="slider-high-temp" class="slider-container"></div>
+        </div>
+        <div class="slider-group">
+            <label>Avg Low Temp (°F)</label>
+            <div id="slider-low-temp" class="slider-container"></div>
+        </div>
+        <div class="slider-group">
+            <label>Avg Overall Temp (°F)</label>
+            <div id="slider-overall-temp" class="slider-container"></div>
+        </div>
+        <div class="slider-group">
+            <label>Sunlight (hrs/day)</label>
+            <div id="slider-sunlight" class="slider-container"></div>
+        </div>
+        <div class="slider-group">
+            <label>Cloudy Days (/month)</label>
+            <div id="slider-cloudy" class="slider-container"></div>
+        </div>
+        <button id="reset-btn">Reset Filters</button>
+    </div>
+    <div id="map"></div>
+    <div id="loading">Loading...</div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
