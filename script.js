@@ -1,6 +1,12 @@
 const map = L.map('map').setView([20, 0], 2);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
+// Use higher resolution CARTO tiles instead of default OpenStreetMap tiles
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap contributors, © CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19,
+    tileSize: 512,
+    zoomOffset: -1,
+    detectRetina: true
 }).addTo(map);
 
 let matchLayer = null;
@@ -12,6 +18,14 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), wait);
     };
+}
+
+// Function to determine grid size based on current zoom level
+function getGridSizeForZoom(zoomLevel) {
+    if (zoomLevel <= 2) return 5;
+    if (zoomLevel <= 4) return 2.5;
+    if (zoomLevel <= 6) return 1;
+    return 0.5;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -148,7 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function createColoredRegions(gridData) {
         // Group grid points into regions for smoother visualization
         const regions = [];
-        const gridSize = 5; // Size of each grid cell in degrees
+        const currentZoom = map.getZoom();
+        const gridSize = getGridSizeForZoom(currentZoom); // Dynamic grid size based on zoom
         
         // Create polygons for each grid cell
         gridData.forEach(point => {
@@ -277,4 +292,9 @@ document.addEventListener('DOMContentLoaded', () => {
             sliders[key].noUiSlider.set(ranges[key]);
         });
     });
+
+    // Update map when zoom changes to adjust grid resolution
+    map.on('zoomend', debounce(() => {
+        updateMap();
+    }, 300));
 });

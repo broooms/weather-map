@@ -6,6 +6,18 @@ body {
     height: 100vh;
     width: 100%;
 }
+
+/* Add smooth transitions for map elements */
+.leaflet-fade-anim .leaflet-tile,
+.leaflet-zoom-anim .leaflet-zoom-animated {
+    transition: opacity 0.25s linear, transform 0.25s ease-out;
+}
+
+/* Smooth transition for the colored regions */
+.leaflet-interactive {
+    transition: fill-opacity 0.3s ease;
+}
+
 #sidebar {
     position: absolute;
     top: 10px;
