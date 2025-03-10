@@ -10,7 +10,7 @@ body {
     position: absolute;
     top: 10px;
     left: 10px;
-    width: 280px;
+    width: 300px; /* Increased width for more space */
     background: rgba(255, 255, 255, 0.9);
     padding: 10px;
     z-index: 1000;
@@ -46,6 +46,31 @@ body {
 /* Add margin below the slider to prevent overlap with the next label */
 .noUi-target {
     margin-bottom: 10px;
+    padding: 0 10px; /* Add padding to prevent tooltip overlap with edges */
+}
+
+/* Fix for slider tooltips positioning */
+.noUi-horizontal .noUi-tooltip {
+    transform: translate(-50%, 0);
+    left: 50%;
+    bottom: 120%;
+}
+
+/* Fix for slider values at the edges */
+.noUi-pips {
+    padding: 0 10px; /* Add padding to the pips */
+}
+
+/* Ensure the slider container has enough space */
+.slider-container {
+    height: 20px;
+    margin: 25px 0 30px 0; /* Increased vertical margins */
+    position: relative;
+}
+
+/* Adjust the slider value display */
+.noUi-value {
+    font-size: 11px;
 }
 
 #loading {
@@ -74,9 +99,4 @@ body {
 
 #reset-btn:hover {
     background: #45a049;
-}
-
-.slider-container {
-    height: 20px;
-    margin: 10px 0 20px 0;
 }

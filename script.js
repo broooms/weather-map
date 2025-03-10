@@ -46,6 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
             format: {
                 to: val => Math.round(val),
                 from: val => Number(val)
+            },
+            margin: 1,
+            padding: [1, 1],
+            pips: {
+                mode: 'range',
+                density: 3,
+                format: {
+                    to: val => Math.round(val)
+                }
             }
         });
         
