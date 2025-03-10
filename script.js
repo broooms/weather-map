@@ -165,36 +165,81 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentZoom = map.getZoom();
         const gridSize = getGridSizeForZoom(currentZoom); // Dynamic grid size based on zoom
         
-        // Create polygons for each grid cell
-        gridData.forEach(point => {
-            if (point.score <= 0) return; // Skip points with no match
-            
-            // Create a polygon for this grid cell
-            const polygonPoints = [
-                [point.lat - gridSize/2, point.lon - gridSize/2],
-                [point.lat + gridSize/2, point.lon - gridSize/2],
-                [point.lat + gridSize/2, point.lon + gridSize/2],
-                [point.lat - gridSize/2, point.lon + gridSize/2]
-            ];
-            
-            // Add this polygon to our regions
-            regions.push({
-                type: 'Feature',
-                properties: {
-                    score: point.score,
-                    data: point
-                },
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: [polygonPoints.map(p => [p[1], p[0]])] // GeoJSON uses [lon, lat]
+        // Create a denser grid for higher zoom levels
+        const bounds = map.getBounds();
+        const north = bounds.getNorth();
+        const south = bounds.getSouth();
+        const east = bounds.getEast();
+        const west = bounds.getWest();
+        
+        // Calculate how many grid cells we need to cover the visible area
+        const latSteps = Math.ceil((north - south) / gridSize);
+        const lonSteps = Math.ceil((east - west) / gridSize);
+        
+        // Create grid cells for the visible area
+        for (let latIdx = 0; latIdx <= latSteps; latIdx++) {
+            for (let lonIdx = 0; lonIdx <= lonSteps; lonIdx++) {
+                const lat = south + (latIdx * gridSize);
+                const lon = west + (lonIdx * gridSize);
+                
+                // Skip if outside valid range
+                if (lat < -85 || lat > 85 || lon < -180 || lon > 180) continue;
+                
+                // Find the closest data point
+                const closestPoint = findClosestDataPoint(lat, lon, gridData);
+                
+                if (closestPoint && closestPoint.score > 0) {
+                    // Create a polygon for this grid cell
+                    const polygonPoints = [
+                        [lat, lon],
+                        [lat + gridSize, lon],
+                        [lat + gridSize, lon + gridSize],
+                        [lat, lon + gridSize]
+                    ];
+                    
+                    // Add this polygon to our regions
+                    regions.push({
+                        type: 'Feature',
+                        properties: {
+                            score: closestPoint.score,
+                            data: closestPoint
+                        },
+                        geometry: {
+                            type: 'Polygon',
+                            coordinates: [polygonPoints.map(p => [p[1], p[0]])] // GeoJSON uses [lon, lat]
+                        }
+                    });
                 }
-            });
-        });
+            }
+        }
         
         return {
             type: 'FeatureCollection',
             features: regions
         };
+    }
+    
+    // Helper function to find the closest data point to a given location
+    function findClosestDataPoint(lat, lon, gridData) {
+        // Find the closest point with a score
+        let closestPoint = null;
+        let minDistance = Infinity;
+        
+        gridData.forEach(point => {
+            if (point.score <= 0) return; // Skip points with no match
+            
+            const distance = Math.sqrt(
+                Math.pow(point.lat - lat, 2) + 
+                Math.pow(point.lon - lon, 2)
+            );
+            
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPoint = point;
+            }
+        });
+        
+        return closestPoint;
     }
 
     function updateMap() {
